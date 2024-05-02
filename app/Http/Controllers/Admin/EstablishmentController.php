@@ -40,4 +40,22 @@ class EstablishmentController extends Controller
             ]);
         }
     }
+
+    public function update(StoreEstablishmentRequest $request, Establishment $establishment) {
+        try {
+            $validated = $request->validated();
+
+            $establishment->update($validated);
+
+            back()->with('message', [
+                'title' => 'Establishment successfully updated',
+                'description' => 'Updated establishment'
+            ]);
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            return back()->withErrors([
+                'message' => 'Something went wrong'
+            ]);
+        }
+    }
 }
