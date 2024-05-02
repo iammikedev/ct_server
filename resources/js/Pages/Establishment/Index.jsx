@@ -12,13 +12,14 @@ import { Toast } from "primereact/toast";
 
 export default function Index({ auth, establishments }) {
     const [createVisible, setCreateVisible] = useState(false);
+    const [establishment, setEstablishment] = useState(null);
     const toast = useRef(null);
 
     const nameBody = (rowData) => {
         return `${rowData.first_name} ${rowData.last_name}`
     }
 
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, put, processing, errors, reset } = useForm({
         first_name: '',
         middle_name: '',
         last_name: '',
@@ -36,12 +37,20 @@ export default function Index({ auth, establishments }) {
     const submit = (e) => {
         e.preventDefault();
 
+        if (establishment == null) {
+            onCreateEstablishment();
+        } else {
+            onUpdateEstablishment();
+        }
+    }
+
+    const onCreateEstablishment = () => {
         post(route('establishment.store'), {
             onSuccess: (page) => {
                 toast.current.show({
-                    severity:'success', 
+                    severity: 'success',
                     summary: page.props.flash.message['title'],
-                    detail: page.props.flash.message['description'], 
+                    detail: page.props.flash.message['description'],
                     life: 3000
                 });
 
@@ -49,9 +58,32 @@ export default function Index({ auth, establishments }) {
             },
             onError: (errors) => {
                 toast.current.show({
-                    severity:'error',
-                    summary: 'Oops!', 
-                    detail:'Something went wrong. Please try again.', 
+                    severity: 'error',
+                    summary: 'Oops!',
+                    detail: 'Something went wrong. Please try again.',
+                    life: 3000
+                });
+            }
+        });
+    }
+
+    const onUpdateEstablishment = () => {
+        put(route('establishment.update', { id: establishment.id }), {
+            onSuccess: (page) => {
+                toast.current.show({
+                    severity: 'success',
+                    summary: page.props.flash.message['title'],
+                    detail: page.props.flash.message['description'],
+                    life: 3000
+                });
+
+                onClose();
+            },
+            onError: (errors) => {
+                toast.current.show({
+                    severity: 'error',
+                    summary: 'Oops!',
+                    detail: 'Something went wrong. Please try again.',
                     life: 3000
                 });
             }
@@ -60,24 +92,66 @@ export default function Index({ auth, establishments }) {
 
     const onClose = () => {
         reset();
+        setEstablishment(null);
         setCreateVisible(false);
     }
 
+    const onEdit = (rowData) => {
+        setEstablishment(rowData);
+        setCreateVisible(true);
+        setData({
+            first_name: rowData.first_name,
+            middle_name: rowData.middle_name,
+            last_name: rowData.last_name,
+            email_address: rowData.email_address,
+            contact_number: rowData.contact_number,
+            establishment_name: rowData.establishment_name,
+            address: rowData.address,
+            baranggay: rowData.baranggay,
+            city: rowData.city,
+            lat: rowData.lat,
+            lng: rowData.lng,
+            status: rowData.status,
+
+        })
+    }
+
     const createDialogFooter = (
-        <Button
-            form='create-establishment-form'
-            type='submit'
-            label='Create'
-            size='small'
-            className='ml-4'
-            loading={processing}
-            disabled={processing} />
+        <div className="flex gap-x-1 justify-end">
+            <Button
+                type='button'
+                label="Cancel"
+                size='small'
+                severity="secondary"
+                onClick={onClose}
+                outlined
+            />
+            <Button
+                form='create-establishment-form'
+                type='submit'
+                label={establishment == null ? 'Create' : 'Update'}
+                size='small'
+                loading={processing}
+                disabled={processing} />
+        </div>
     )
+
+    const actionCellBody = (rowData) => {
+        return (
+            <Button
+                icon="pi pi-pen-to-square"
+                rounded
+                text
+                aria-label="Edit"
+                type="button"
+                onClick={() => onEdit(rowData)}
+            />
+        )
+    }
 
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Establishments</h2>}
         >
             <Head title="Establishments" />
             <Toast ref={toast} />
@@ -94,11 +168,12 @@ export default function Index({ auth, establishments }) {
                         <Column field="address" sortable header="Address"></Column>
                         <Column field="baranggay" sortable header="Baranggay"></Column>
                         <Column field="created_at" sortable header="Created At"></Column>
+                        <Column field="created_at" sortable header="Action" body={actionCellBody}></Column>
                     </DataTable>
                 </div>
             </div>
 
-            <Dialog header="Add Establishment" className='w-1/2' visible={createVisible} onHide={() => setCreateVisible(false)} footer={createDialogFooter}>
+            <Dialog header={`${establishment == null ? 'Edit' : 'Add'} Establishment`} className='w-1/2' visible={createVisible} onHide={() => setCreateVisible(false)} footer={createDialogFooter}>
                 <form id="create-establishment-form" onSubmit={submit} className="space-y-4">
 
                     <h3 className="text-lg">Basic Information</h3>
@@ -107,7 +182,7 @@ export default function Index({ auth, establishments }) {
                             id="establishment_name"
                             type="text"
                             className="p-inputtext-sm w-full"
-                            value={data.email}
+                            value={data.establishment_name}
                             onChange={(e) => setData("establishment_name", e.target.value)}
                             placeholder='Establishment Name'
                             invalid={!(errors.establishment_name === undefined)}

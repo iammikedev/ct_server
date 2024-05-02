@@ -32,8 +32,8 @@ class StoreEstablishmentRequest extends FormRequest
             'address' => 'required|string',
             'baranggay' => 'required|string',
             'city' => 'required|string',
-            'lat' => 'required|decimal:2,6',
-            'lng' => 'required|decimal:3,6',
+            'lat' => 'required|decimal:2,8',
+            'lng' => 'required|decimal:3,8',
         ];
     }
 }
