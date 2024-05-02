@@ -1,18 +1,18 @@
 import { useEffect } from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
-import {
-    Button,
-    FormControl,
-    FormLabel,
-    FormErrorMessage,
-    FormHelperText,
-    Input,
-} from '@chakra-ui/react'
+import { Button } from 'primereact/button';
+import { InputText } from 'primereact/inputtext';
+import { FloatLabel } from 'primereact/floatlabel';
+import { Password } from 'primereact/password';
+import { Toast } from 'primereact/toast';
+import { useRef } from 'react';
+
 export default function Login({ status, canResetPassword }) {
     const userAgent = window.navigator.userAgent;
     const randomString = Math.random().toString(20).substring(2, 14) + Math.random().toString(20).substring(2, 14);
-    const deviceID = `${userAgent}  -${randomString}`;
+    const deviceID = `${userAgent} - ${randomString}`;
+    const toast = useRef(null)
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -29,56 +29,59 @@ export default function Login({ status, canResetPassword }) {
     const submit = (e) => {
         e.preventDefault();
 
-        post(route('login'));
+        post(route('login'))
     };
 
+    const cardFooter = (
+        <div className="flex items-center justify-end">
+            {canResetPassword && (
+                <Link
+                    href={route('password.request')}
+                    className="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
+                >
+                    Forgot your password?
+                </Link>
+            )}
+
+            <Button form='login-form' type='submit' label='Login' size='small' className='ml-4' loading={processing} disabled={processing} />
+        </div>
+    )
+
     return (
-        <GuestLayout>
+        <GuestLayout footer={cardFooter}>
             <Head title="Log in" />
 
-            {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
+            <Toast ref={toast} />
 
-            <form onSubmit={submit}>
+            <form id='login-form' onSubmit={submit} className="space-y-4">
 
-                <FormControl isRequired isInvalid={errors.email}>
-                    <FormLabel>Email address</FormLabel>
-                    <Input
-                        type='email'
-                        name='email'
+                <div className='gap-y-2'>
+                    <InputText
+                        id="email"
+                        type="text"
+                        className="p-inputtext-sm w-full"
                         value={data.email}
-                        onChange={(e) => setData('email', e.target.value)} />
-                    {!errors.email ? (<FormHelperText>Do not share email to others</FormHelperText>) : (<FormErrorMessage>{errors.email}</FormErrorMessage>)}
+                        onChange={(e) => setData("email", e.target.value)}
+                        placeholder='Email Address'
+                        invalid={!(errors.email === undefined)}
+                    />
 
-                </FormControl>
+                    {errors.email && <small className='text-red-600'>{errors.email}</small>}
+                </div>
 
-                <FormControl isRequired mt={4} isInvalid={errors.password}>
-                    <FormLabel>Password</FormLabel>
-                    <Input
-                        type='password'
-                        name='password'
+                <div className="gap-y-2">
+                    <Password
                         value={data.password}
-                        onChange={(e) => setData('password', e.target.value)} />
-                    <FormErrorMessage>{errors.password}</FormErrorMessage>
-                </FormControl>
+                        inputClassName='p-inputtext-sm w-full'
+                        className='w-full'
+                        onChange={(e) => setData("password", e.target.value)}
+                        placeholder='Password'
+                        panelClassName='invisible'
+                        showIcon={true}
+                        invalid={!(errors.password === undefined)}
+                    />
 
-
-                <div className="flex items-center justify-end mt-4">
-                    {canResetPassword && (
-                        <Link
-                            href={route('password.request')}
-                            className="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
-                        >
-                            Forgot your password?
-                        </Link>
-                    )}
-
-                    <Button
-                        type='submit'
-                        colorScheme='green'
-                        isLoading={processing}
-                        isDisabled={processing}
-                        ml={4}>Login
-                    </Button>
+                    {errors.password && <small className='text-red-600'>{errors.password}</small>}
                 </div>
             </form>
         </GuestLayout>
