@@ -55,7 +55,7 @@ export default function Login({ status, canResetPassword }) {
 
             <form id='login-form' onSubmit={submit} className="space-y-4">
 
-                <div className='gap-y-2'>
+                <div>
                     <InputText
                         id="email"
                         type="text"
@@ -69,7 +69,7 @@ export default function Login({ status, canResetPassword }) {
                     {errors.email && <small className='text-red-600'>{errors.email}</small>}
                 </div>
 
-                <div className="gap-y-2">
+                <div>
                     <Password
                         value={data.password}
                         inputClassName='p-inputtext-sm w-full'

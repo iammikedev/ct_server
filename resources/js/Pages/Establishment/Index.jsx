@@ -1,17 +1,78 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { useState } from 'react';
-import { Head } from '@inertiajs/react';
+import { useState, useRef } from 'react';
+import { Head, useForm } from '@inertiajs/react';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import { InputText } from "primereact/inputtext";
 import { Dialog } from 'primereact/dialog';
+import { InputMask } from 'primereact/inputmask';
+import { InputNumber } from 'primereact/inputnumber';
+import { Toast } from "primereact/toast";
 
 export default function Index({ auth, establishments }) {
     const [createVisible, setCreateVisible] = useState(false);
+    const toast = useRef(null);
 
     const nameBody = (rowData) => {
         return `${rowData.first_name} ${rowData.last_name}`
     }
+
+    const { data, setData, post, processing, errors, reset } = useForm({
+        first_name: '',
+        middle_name: '',
+        last_name: '',
+        email_address: '',
+        contact_number: '',
+        establishment_name: '',
+        address: '',
+        baranggay: '',
+        city: '',
+        lat: null,
+        lng: null,
+        status: '',
+    });
+
+    const submit = (e) => {
+        e.preventDefault();
+
+        post(route('establishment.store'), {
+            onSuccess: (page) => {
+                toast.current.show({
+                    severity:'success', 
+                    summary: page.props.flash.message['title'],
+                    detail: page.props.flash.message['description'], 
+                    life: 3000
+                });
+
+                onClose();
+            },
+            onError: (errors) => {
+                toast.current.show({
+                    severity:'error',
+                    summary: 'Oops!', 
+                    detail:'Something went wrong. Please try again.', 
+                    life: 3000
+                });
+            }
+        });
+    }
+
+    const onClose = () => {
+        reset();
+        setCreateVisible(false);
+    }
+
+    const createDialogFooter = (
+        <Button
+            form='create-establishment-form'
+            type='submit'
+            label='Create'
+            size='small'
+            className='ml-4'
+            loading={processing}
+            disabled={processing} />
+    )
 
     return (
         <AuthenticatedLayout
@@ -19,10 +80,11 @@ export default function Index({ auth, establishments }) {
             header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Establishments</h2>}
         >
             <Head title="Establishments" />
+            <Toast ref={toast} />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <Button type="button" label="Create" icon="pi pi-plus" size="small" className="mb-4" onClick={() => setCreateVisible(true)}/>
+                    <Button type="button" label="Create" icon="pi pi-plus" size="small" className="mb-4" onClick={() => setCreateVisible(true)} />
 
                     <DataTable value={establishments.data} columnResizeMode="expand" resizableColumns scrollable paginator rows={10} rowsPerPageOptions={[10, 25, 50]}>
                         <Column field="establishment_code" className="font-bold" frozen sortable header="Code"></Column>
@@ -36,10 +98,191 @@ export default function Index({ auth, establishments }) {
                 </div>
             </div>
 
-            <Dialog header="Header" visible={createVisible} style={{ width: '50vw' }} onHide={() => setCreateVisible(false)}>
-                <p className="m-0">
-                    
-                </p>
+            <Dialog header="Add Establishment" className='w-1/2' visible={createVisible} onHide={() => setCreateVisible(false)} footer={createDialogFooter}>
+                <form id="create-establishment-form" onSubmit={submit} className="space-y-4">
+
+                    <h3 className="text-lg">Basic Information</h3>
+                    <div>
+                        <InputText
+                            id="establishment_name"
+                            type="text"
+                            className="p-inputtext-sm w-full"
+                            value={data.email}
+                            onChange={(e) => setData("establishment_name", e.target.value)}
+                            placeholder='Establishment Name'
+                            invalid={!(errors.establishment_name === undefined)}
+                            required
+                        />
+
+                        {errors.establishment_name && <small className='text-red-600'>{errors.establishment_name}</small>}
+                    </div>
+
+                    <div>
+                        <InputText
+                            id="first_name"
+                            type="text"
+                            className="p-inputtext-sm w-full"
+                            value={data.first_name}
+                            onChange={(e) => setData("first_name", e.target.value)}
+                            placeholder='First Name'
+                            invalid={!(errors.first_name === undefined)}
+                            required
+                        />
+
+                        {errors.first_name && <small className='text-red-600'>{errors.first_name}</small>}
+                    </div>
+
+                    <div>
+                        <InputText
+                            id="middle_name"
+                            type="text"
+                            className="p-inputtext-sm w-full"
+                            value={data.middle_name}
+                            onChange={(e) => setData("middle_name", e.target.value)}
+                            placeholder='Middle Name'
+                            invalid={!(errors.middle_name === undefined)}
+                        />
+
+                        {errors.middle_name && <small className='text-red-600'>{errors.middle_name}</small>}
+                    </div>
+
+                    <div>
+                        <InputText
+                            id="last_name"
+                            type="text"
+                            className="p-inputtext-sm w-full"
+                            value={data.last_name}
+                            onChange={(e) => setData("last_name", e.target.value)}
+                            placeholder='Last Name'
+                            invalid={!(errors.last_name === undefined)}
+                        />
+
+                        {errors.last_name && <small className='text-red-600'>{errors.last_name}</small>}
+                    </div>
+
+                    <h3 className="text-lg">Contact Details</h3>
+
+                    <div className="flex gap-x-4">
+                        <div className="w-full">
+                            <InputText
+                                id="email_address"
+                                type="text"
+                                className="p-inputtext-sm w-full"
+                                value={data.email_address}
+                                onChange={(e) => setData("email_address", e.target.value)}
+                                placeholder='Email Address'
+                                invalid={!(errors.email_address === undefined)}
+                                required
+                            />
+
+                            {errors.email_address && <small className='text-red-600'>{errors.email_address}</small>}
+                        </div>
+
+                        <div className="w-full">
+                            <InputMask
+                                id="contact_number"
+                                mask="0999-999-9999"
+                                value={data.contact_number}
+                                className="p-inputtext-sm w-full"
+                                onChange={(e) => setData("contact_number", e.target.value)}
+                                placeholder="Contact Number"
+                                invalid={!(errors.contact_number === undefined)}
+                                unmask={true}
+                                required
+                            />
+
+                            {errors.email_address && <small className='text-red-600'>{errors.email_address}</small>}
+                        </div>
+                    </div>
+
+                    <h3 className="text-lg">Location Information</h3>
+                    <small className="mt-4">Get coordinates of an establishment using this <a className="font-bold text-current" target="_blank" href="https://www.latlong.net/">link</a>.</small>
+
+                    <div>
+                        <InputText
+                            id="address"
+                            type="text"
+                            className="p-inputtext-sm w-full"
+                            value={data.address}
+                            onChange={(e) => setData("address", e.target.value)}
+                            placeholder='Address'
+                            invalid={!(errors.address === undefined)}
+                            required
+                        />
+
+                        {errors.address && <small className='text-red-600'>{errors.address}</small>}
+                    </div>
+
+                    <div className="flex gap-x-4">
+                        <div className="w-full">
+                            <InputText
+                                id="baranggay"
+                                type="text"
+                                className="p-inputtext-sm w-full"
+                                value={data.baranggay}
+                                onChange={(e) => setData("baranggay", e.target.value)}
+                                placeholder='Baranggay'
+                                invalid={!(errors.baranggay === undefined)}
+                                required
+                            />
+
+                            {errors.baranggay && <small className='text-red-600'>{errors.baranggay}</small>}
+                        </div>
+
+                        <div className="w-full">
+                            <InputText
+                                id="city"
+                                type="text"
+                                className="p-inputtext-sm w-full"
+                                value={data.city}
+                                onChange={(e) => setData("city", e.target.value)}
+                                placeholder='City'
+                                invalid={!(errors.city === undefined)}
+                                required
+                            />
+
+                            {errors.city && <small className='text-red-600'>{errors.city}</small>}
+                        </div>
+                    </div>
+
+                    <div className="flex gap-x-4">
+                        <div className="w-full">
+                            <InputNumber
+                                id="lat"
+                                className="p-inputtext-sm w-full"
+                                value={data.lat}
+                                onChange={(e) => setData("lat", e.value)}
+                                placeholder='Latitude'
+                                invalid={!(errors.lat === undefined)}
+                                useGrouping={false}
+                                max={90}
+                                minFractionDigits={2}
+                                maxFractionDigits={6}
+                                required
+                            />
+
+                            {errors.lat && <small className='text-red-600'>{errors.lat}</small>}
+                        </div>
+
+                        <div className="w-full">
+                            <InputNumber
+                                id="lng"
+                                className="p-inputtext-sm w-full"
+                                value={data.lng}
+                                onChange={(e) => setData("lng", e.value)}
+                                placeholder='Longitude'
+                                invalid={!(errors.lng === undefined)}
+                                useGrouping={false}
+                                max={180}
+                                minFractionDigits={2}
+                                maxFractionDigits={6}
+                                required
+                            />
+
+                            {errors.lng && <small className='text-red-600'>{errors.lng}</small>}
+                        </div>
+                    </div>
+                </form>
             </Dialog>
         </AuthenticatedLayout>
     );

@@ -27,7 +27,7 @@ class StoreEstablishmentRequest extends FormRequest
             'middle_name' => 'string|nullable',
             'last_name' => 'required|string',
             'email_address' => 'required|string|email',
-            'contact_number' => 'required|numeric|digits:10',
+            'contact_number' => 'required|string|min:10|max:10',
             'establishment_name' => 'required|string',
             'address' => 'required|string',
             'baranggay' => 'required|string',
