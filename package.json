@@ -20,11 +20,8 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
-        "@chakra-ui/icons": "^2.1.1",
-        "@chakra-ui/react": "^2.8.2",
-        "@emotion/react": "^11.11.1",
-        "@emotion/styled": "^11.11.0",
-        "framer-motion": "^10.16.5",
+        "primeicons": "^7.0.0",
+        "primereact": "^10.6.3",
         "react-data-table-component": "^7.5.4",
         "styled-components": "^6.1.1"
     }

@@ -1,54 +1,17 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { useState } from 'react';
 import { Head } from '@inertiajs/react';
-import { Button, useDisclosure } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
-import Create from "./Create";
-import DataTable from 'react-data-table-component';
+import { Button } from 'primereact/button';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Dialog } from 'primereact/dialog';
 
 export default function Index({ auth, establishments }) {
-    const columns = [
-        {
-            name: 'Code',
-            selector: row => row.establishment_code,
-        },
-        {
-            name: 'Name',
-            selector: row => row.establishment_name,
-        },
-        {
-            name: 'Email',
-            selector: row => row.email_address,
-        },
-        {
-            name: 'Contact Person',
-            selector: row => row.first_name + ' ' + row.last_name,
-        },
-        {
-            name: 'Contact Number',
-            selector: row => '0' + row.contact_number
-        },
-        {
-            name: 'Address',
-            selector: row => row.address
-        },
-        {
-            name: 'Baranggay',
-            selector: row => row.baranggay
-        },
-    ];
+    const [createVisible, setCreateVisible] = useState(false);
 
-    const conditionalRowStyles = [{
-        when: row => row.status == 'Infected',
-        style: {
-            backgroundColor: 'rgb(239, 68, 68)',
-            color: 'white',
-            '&:hover': {
-              cursor: 'pointer',
-            },
-          },
-    }];
-
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const nameBody = (rowData) => {
+        return `${rowData.first_name} ${rowData.last_name}`
+    }
 
     return (
         <AuthenticatedLayout
@@ -59,20 +22,25 @@ export default function Index({ auth, establishments }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <Button leftIcon={<AddIcon />} colorScheme='green' mb={4} onClick={onOpen}>Add New</Button>
+                    <Button type="button" label="Create" icon="pi pi-plus" size="small" className="mb-4" onClick={() => setCreateVisible(true)}/>
 
-                    <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                        <DataTable
-                            columns={columns}
-                            data={establishments.data}
-                            pagination
-                            conditionalRowStyles={conditionalRowStyles}
-                        />
-                    </div>
+                    <DataTable value={establishments.data} columnResizeMode="expand" resizableColumns scrollable paginator rows={10} rowsPerPageOptions={[10, 25, 50]}>
+                        <Column field="establishment_code" className="font-bold" frozen sortable header="Code"></Column>
+                        <Column field="establishment_name" sortable header="Name"></Column>
+                        <Column field="email_address" sortable header="Email Address"></Column>
+                        <Column field="first_name" sortable body={nameBody} header="Contact Person"></Column>
+                        <Column field="address" sortable header="Address"></Column>
+                        <Column field="baranggay" sortable header="Baranggay"></Column>
+                        <Column field="created_at" sortable header="Created At"></Column>
+                    </DataTable>
                 </div>
             </div>
 
-            <Create isOpen={isOpen} onClose={onClose} />
+            <Dialog header="Header" visible={createVisible} style={{ width: '50vw' }} onHide={() => setCreateVisible(false)}>
+                <p className="m-0">
+                    
+                </p>
+            </Dialog>
         </AuthenticatedLayout>
     );
 }
