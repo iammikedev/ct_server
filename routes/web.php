@@ -37,6 +37,9 @@ Route::middleware('auth')->group(function () {
 
     //Establishment
     Route::resource('establishment', EstablishmentController::class);
+
+    //User
+    Route::resource('user', \App\Http\Controllers\Api\UserController::class);
 });
 
 require __DIR__.'/auth.php';
