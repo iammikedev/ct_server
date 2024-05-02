@@ -9,6 +9,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputMask } from 'primereact/inputmask';
 import { InputNumber } from 'primereact/inputnumber';
 import { Toast } from "primereact/toast";
+import QRCode from 'qrcode.react';
 
 export default function Index({ auth, establishments }) {
     const [createVisible, setCreateVisible] = useState(false);
@@ -33,6 +34,19 @@ export default function Index({ auth, establishments }) {
         lng: null,
         status: '',
     });
+
+    const downloadQRCode = () => {
+        const qrCodeURL = document.getElementById('qrCode')
+            .toDataURL("image/png")
+            .replace("image/png", "image/octet-stream");
+        console.log(qrCodeURL)
+        let aEl = document.createElement("a");
+        aEl.href = qrCodeURL;
+        aEl.download = `${establishment.establishment_code}.png`;
+        document.body.appendChild(aEl);
+        aEl.click();
+        document.body.removeChild(aEl);
+    }
 
     const submit = (e) => {
         e.preventDefault();
@@ -117,22 +131,32 @@ export default function Index({ auth, establishments }) {
     }
 
     const createDialogFooter = (
-        <div className="flex gap-x-1 justify-end">
+        <div className="flex gap-x-1 justify-between">
             <Button
                 type='button'
-                label="Cancel"
+                label="Download QR"
                 size='small'
-                severity="secondary"
-                onClick={onClose}
+                severity="info"
+                onClick={downloadQRCode}
                 outlined
             />
-            <Button
-                form='create-establishment-form'
-                type='submit'
-                label={establishment == null ? 'Create' : 'Update'}
-                size='small'
-                loading={processing}
-                disabled={processing} />
+            <div>
+                <Button
+                    type='button'
+                    label="Cancel"
+                    size='small'
+                    severity="secondary"
+                    onClick={onClose}
+                    outlined
+                />
+                <Button
+                    form='create-establishment-form'
+                    type='submit'
+                    label={establishment == null ? 'Create' : 'Update'}
+                    size='small'
+                    loading={processing}
+                    disabled={processing} />
+            </div>
         </div>
     )
 
@@ -173,8 +197,15 @@ export default function Index({ auth, establishments }) {
                 </div>
             </div>
 
-            <Dialog header={`${establishment == null ? 'Edit' : 'Add'} Establishment`} className='w-1/2' visible={createVisible} onHide={() => setCreateVisible(false)} footer={createDialogFooter}>
+            <Dialog header={`${establishment != null ? 'Edit' : 'Add'} Establishment`} className='w-1/2' visible={createVisible} onHide={() => setCreateVisible(false)} footer={createDialogFooter}>
                 <form id="create-establishment-form" onSubmit={submit} className="space-y-4">
+
+
+                    {establishment && (
+                        <div className="flex justify-center">
+                            <QRCode value={establishment.establishment_code} id="qrCode" size={250} />
+                        </div>
+                    )}
 
                     <h3 className="text-lg">Basic Information</h3>
                     <div>
