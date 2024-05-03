@@ -52,7 +52,6 @@ class EstablishmentController extends Controller
                 'description' => 'Updated establishment'
             ]);
         } catch (\Exception $e) {
-            dd($e->getMessage());
             return back()->withErrors([
                 'message' => 'Something went wrong'
             ]);

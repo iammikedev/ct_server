@@ -40,6 +40,9 @@ Route::middleware('auth')->group(function () {
 
     //User
     Route::resource('user', \App\Http\Controllers\Api\UserController::class);
+
+    //Announcement
+    Route::resource('announcement', \App\Http\Controllers\Admin\AnnouncementController::class);
 });
 
 require __DIR__.'/auth.php';
