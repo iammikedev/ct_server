@@ -112,7 +112,6 @@ export default function Index({ auth, establishments }) {
 
     const onEdit = (rowData) => {
         setEstablishment(rowData);
-        setCreateVisible(true);
         setData({
             first_name: rowData.first_name,
             middle_name: rowData.middle_name,
@@ -128,6 +127,7 @@ export default function Index({ auth, establishments }) {
             status: rowData.status,
 
         })
+        setCreateVisible(true)
     }
 
     const createDialogFooter = (
@@ -192,15 +192,13 @@ export default function Index({ auth, establishments }) {
                         <Column field="address" sortable header="Address"></Column>
                         <Column field="baranggay" sortable header="Baranggay"></Column>
                         <Column field="created_at" sortable header="Created At"></Column>
-                        <Column field="created_at" sortable header="Action" body={actionCellBody}></Column>
+                        <Column header="Action" body={actionCellBody}></Column>
                     </DataTable>
                 </div>
             </div>
 
             <Dialog header={`${establishment != null ? 'Edit' : 'Add'} Establishment`} className='w-1/2' visible={createVisible} onHide={() => setCreateVisible(false)} footer={createDialogFooter}>
                 <form id="create-establishment-form" onSubmit={submit} className="space-y-4">
-
-
                     {establishment && (
                         <div className="flex justify-center">
                             <QRCode value={establishment.establishment_code} id="qrCode" size={250} />
