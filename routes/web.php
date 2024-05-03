@@ -43,6 +43,9 @@ Route::middleware('auth')->group(function () {
 
     //Announcement
     Route::resource('announcement', \App\Http\Controllers\Admin\AnnouncementController::class);
+
+    //Scans
+    Route::resource('scan', \App\Http\Controllers\Admin\ScanController::class);
 });
 
 require __DIR__.'/auth.php';
