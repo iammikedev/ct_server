@@ -33,7 +33,7 @@ export default function Login({ status, canResetPassword }) {
     };
 
     const cardFooter = (
-        <div className="flex items-center justify-end">
+        <div className="flex items-center justify-end w-full">
             {canResetPassword && (
                 <Link
                     href={route('password.request')}
@@ -43,7 +43,7 @@ export default function Login({ status, canResetPassword }) {
                 </Link>
             )}
 
-            <Button form='login-form' type='submit' label='Login' size='small' className='ml-4' loading={processing} disabled={processing} />
+            <Button form='login-form' type='submit' label='Login' size='small' className='w-full' loading={processing} disabled={processing} />
         </div>
     )
 

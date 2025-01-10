@@ -99,8 +99,8 @@ export default function Dashboard({
 
                     </div>
 
-                    <div className='grid grid-cols-6 grid-rows-3 gap-x-4'>
-                        <Card className='flex-1 col-span-4 row-span-2' title="COVID Analytics">
+                    {/* <div className='grid grid-cols-6 grid-rows-3 gap-x-4'>
+                        <Card className='flex-1 col-span-4 row-span-2' title={"COVID Analytics"}>
                             <Chart type="line" data={chartData} options={chartOptions} />
                         </Card>
 
@@ -111,7 +111,7 @@ export default function Dashboard({
                             </div>
                             <TimeAgo className="text-sm italic" date={latest_announcement.created_at} />
                         </Card>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </AuthenticatedLayout>
