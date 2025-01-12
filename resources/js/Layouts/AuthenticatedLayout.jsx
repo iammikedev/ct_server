@@ -49,6 +49,12 @@ export default function Authenticated({ user, header, children }) {
                                     Scans
                                 </NavLink>
                             </div>
+
+                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink href={route('log.index')} active={route().current('log.index')}>
+                                    Audit Log
+                                </NavLink>
+                            </div>
                         </div>
 
                         <div className="hidden sm:flex sm:items-center sm:ms-6">
@@ -129,6 +135,7 @@ export default function Authenticated({ user, header, children }) {
 
                         <div className="mt-3 space-y-1">
                             <ResponsiveNavLink href={route('profile.edit')}>Profile</ResponsiveNavLink>
+                            <ResponsiveNavLink href={route('log.index')}>Audit Logs</ResponsiveNavLink>
                             <ResponsiveNavLink method="post" href={route('logout')} as="button">
                                 Log Out
                             </ResponsiveNavLink>

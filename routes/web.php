@@ -39,6 +39,8 @@ Route::middleware('auth')->group(function () {
 
     //Scans
     Route::resource('scan', \App\Http\Controllers\Admin\ScanController::class);
+
+    Route::resource('log', \App\Http\Controllers\Admin\AuditLogController::class);
 });
 
 require __DIR__.'/auth.php';

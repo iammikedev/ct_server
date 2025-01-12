@@ -21,6 +21,7 @@
     },
     "dependencies": {
         "chart.js": "^4.4.2",
+        "date-fns": "^4.1.0",
         "html-react-parser": "^5.1.10",
         "primeicons": "^7.0.0",
         "primereact": "^10.6.3",
