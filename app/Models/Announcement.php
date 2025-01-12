@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
-class Announcement extends Model
+use OwenIt\Auditing\Contracts\Auditable;
+
+class Announcement extends Model implements Auditable
 {
-    use HasFactory;
+    use HasFactory, \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'title',
@@ -19,5 +21,9 @@ class Announcement extends Model
 
     public function getCreatedAtAttribute($value) { 
         return Carbon::parse($value)->format('Y-m-d H:i:s');
+    }
+
+    public function generateTags(): array {
+        return ['Announcement'];
     }
 }
