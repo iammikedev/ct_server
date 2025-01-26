@@ -19,10 +19,6 @@ class Announcement extends Model implements Auditable
         'is_active'
     ];
 
-    public function getCreatedAtAttribute($value) { 
-        return Carbon::parse($value)->format('Y-m-d H:i:s');
-    }
-
     public function generateTags(): array {
         return ['Announcement'];
     }

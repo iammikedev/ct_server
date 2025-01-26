@@ -55,8 +55,4 @@ class User extends Authenticatable implements Auditable
         return $this->hasOne(UserProfile::class, 'user_id');
     }
 
-    public function getCreatedAtAttribute() {
-        return \Carbon\Carbon::parse($this->attributes['created_at'])
-            ->format('d/m/Y H:i:s');
-    }
 }
