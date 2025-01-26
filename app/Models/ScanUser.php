@@ -33,8 +33,4 @@ class ScanUser extends Model
     public function host() { 
         return $this->belongsTo(User::class, 'user_id');
     }
-
-    public function getCreatedAtAttribute($value) { 
-        return Carbon::parse($value)->format('Y-m-d H:i:s');
-    }
 }

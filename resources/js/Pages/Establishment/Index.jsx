@@ -10,6 +10,7 @@ import { InputMask } from 'primereact/inputmask';
 import { InputNumber } from 'primereact/inputnumber';
 import { Toast } from "primereact/toast";
 import QRCode from 'qrcode.react';
+import { format } from "date-fns";
 
 export default function Index({ auth, establishments }) {
     const [createVisible, setCreateVisible] = useState(false);
@@ -130,6 +131,11 @@ export default function Index({ auth, establishments }) {
         setCreateVisible(true)
     }
 
+    const createdAtBody = (str) => {
+        const date = new Date(str.created_at);
+        return format(date, "MMM dd, yyyy hh:mm a");
+    }
+
     const createDialogFooter = (
         <div className="flex gap-x-1 justify-between">
             <Button
@@ -191,7 +197,7 @@ export default function Index({ auth, establishments }) {
                         <Column field="first_name" sortable body={nameBody} header="Contact Person"></Column>
                         <Column field="address" sortable header="Address"></Column>
                         <Column field="baranggay" sortable header="Baranggay"></Column>
-                        <Column field="created_at" sortable header="Created At"></Column>
+                        <Column field="created_at" sortable header="Created At" body={createdAtBody}></Column>
                         <Column header="Action" body={actionCellBody}></Column>
                     </DataTable>
                 </div>

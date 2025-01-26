@@ -2,12 +2,19 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
+import { format } from "date-fns";
 
 export default function Index({ auth, users }) {
 
     const middleNameBody = (rowData) => {
         return rowData.user_profile.middlen_name ? rowData.user_profile.middle_name : '-';
     }
+
+    const createdAtBody = (str) => {
+        const date = new Date(str.created_at);
+        return format(date, "MMM dd, yyyy hh:mm a");
+    }
+
     return (
         <AuthenticatedLayout user={auth.user}>
 
@@ -21,7 +28,7 @@ export default function Index({ auth, users }) {
                         <Column field="user_profile.middle_name" sortable header="Middle Name" body={middleNameBody}></Column>
                         <Column field="user_profile.last_name" sortable header="Last Name"></Column>
                         <Column field="user_profile.address" sortable header="Address"></Column>
-                        <Column field="created_at" sortable header="Created At"></Column>
+                        <Column field="created_at" sortable header="Created At" body={createdAtBody}></Column>
                     </DataTable>
                 </div>
             </div>

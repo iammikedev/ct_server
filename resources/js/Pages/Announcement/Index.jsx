@@ -12,6 +12,7 @@ import { Toast } from 'primereact/toast';
 import parse from 'html-react-parser';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { format } from "date-fns";
 
 export default function Index({ auth, announcements }) {
     const [createVisible, setCreateVisible] = useState(false);
@@ -63,8 +64,8 @@ export default function Index({ auth, announcements }) {
 
     const createAnnouncement = () => {
         post(route('announcement.store'), {
-            onSuccess: onSuccess, 
-            onError: onError 
+            onSuccess: onSuccess,
+            onError: onError
         })
     }
 
@@ -133,6 +134,11 @@ export default function Index({ auth, announcements }) {
         )
     }
 
+    const createdAtBody = (str) => {
+        const date = new Date(str.created_at);
+        return format(date, "MMM dd, yyyy hh:mm a");
+    }
+
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Announcements" />
@@ -147,7 +153,7 @@ export default function Index({ auth, announcements }) {
                         <Column field="description" sortable header="Content" body={descriptionBody}></Column>
                         <Column field="is_active" sortable header="Status" body={statusBody}></Column>
                         <Column field='is_important' sortable header='Important' body={importantBody}></Column>
-                        <Column field="created_at" sortable header="Created At"></Column>
+                        <Column field="created_at" sortable header="Created At" body={createdAtBody}></Column>
                         <Column header="Action" body={actionCellBody}></Column>
                     </DataTable>
                 </div>

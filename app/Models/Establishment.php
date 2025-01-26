@@ -26,11 +26,6 @@ class Establishment extends Model implements Auditable
         'lat'
     ];
 
-    public function getCreatedAtAttribute($value)
-    {
-        return Carbon::parse($value)->format('Y-m-d H:i:s');
-    }
-
     public function generateTags(): array {
         return ['Establishment'];
     }
