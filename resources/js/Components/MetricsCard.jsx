@@ -2,7 +2,7 @@ import { Card } from "primereact/card"
 
 export default function MetricsCard({ title, value, icon }) {
     return (
-        <Card>
+        <Card className="flex-1">
             <div className="flex justify-between items-center">
                 <div>
                     <small className="text-grey-700">{title}</small>

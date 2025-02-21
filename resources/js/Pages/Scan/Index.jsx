@@ -17,11 +17,6 @@ export default function Index({ auth, scans }) {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-                    <DataTable value={scans} columnResizeMode="expand" resizableColumns scrollable paginator rows={10} rowsPerPageOptions={[10, 25, 50]}>
-                        <Column field="host.name" className="font-bold" frozen sortable header="Host"></Column>
-                        <Column field="user.name" frozen sortable header="Scanned User"></Column>
-                        <Column field="created_at" sortable header="Scanned At" body={createdAtBody}></Column>
-                    </DataTable>
                 </div>
             </div>
         </AuthenticatedLayout>

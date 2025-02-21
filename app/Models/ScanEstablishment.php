@@ -21,11 +21,17 @@ class ScanEstablishment extends Model
 
     /**
      * Get the establishment that owns the ScanEstablishment
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function establishment()
     {
         return $this->belongsTo(Establishment::class, 'establishment_id');
+    }
+
+    /**
+     * Get the user that owns the ScanEstablishment
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
