@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Establishment;
+use App\Models\ScanEstablishment;
 use App\Http\Requests\Establishment\StoreEstablishmentRequest;
 use Illuminate\Support\Str;
 
@@ -13,9 +14,39 @@ class EstablishmentController extends Controller
 {
     public function index() {
         $establishments = Establishment::latest()->paginate(10);
-
         return Inertia::render('Establishment/Index', [
             'establishments' => $establishments
+        ]);
+    }
+
+    public function show($id) {
+        $establishment = Establishment::with('scans')->findOrFail($id); 
+        $scans = $establishment->scans()->with('user')->paginate(10);
+
+        // Fetch both daily and monthly scan counts in a single query
+        $scanStats = $establishment->scans()
+            ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as period, COUNT(*) as count, "monthly" as type')
+            ->groupBy('period')
+            ->unionAll(
+                $establishment->scans()
+                    ->selectRaw('DATE(created_at) as period, COUNT(*) as count, "daily" as type')
+                    ->groupBy('period')
+            )
+            ->get();
+
+        // Separate the results into monthly and daily groups
+        $monthlyScans = $scanStats->where('type', 'monthly')->values();
+        $dailyScans = $scanStats->where('type', 'daily')->values();
+
+        // Compute averages
+        $avgMonthlyScans = $monthlyScans->avg('count');
+        $avgDailyScans = $dailyScans->avg('count');
+
+        return Inertia::render('Establishment/View', [
+            'establishment' => $establishment,
+            'scans' => $scans,
+            'avg_monthly_scans' => $avgMonthlyScans,
+            'avg_daily_scans' => $avgDailyScans,
         ]);
     }
 

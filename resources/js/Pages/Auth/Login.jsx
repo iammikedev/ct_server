@@ -7,6 +7,7 @@ import { FloatLabel } from 'primereact/floatlabel';
 import { Password } from 'primereact/password';
 import { Toast } from 'primereact/toast';
 import { useRef } from 'react';
+import axios from "axios";
 
 export default function Login({ status, canResetPassword }) {
     const userAgent = window.navigator.userAgent;
@@ -21,15 +22,14 @@ export default function Login({ status, canResetPassword }) {
     });
 
     useEffect(() => {
-        return () => {
-            reset('password');
-        };
+        reset('password');
     }, []);
 
     const submit = (e) => {
         e.preventDefault();
-
-        post(route('login'))
+        axios.get('/sanctum/csrf-cookie').then(response => {
+            post(route('login'))
+        });
     };
 
     const cardFooter = (

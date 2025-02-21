@@ -22,6 +22,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::apiResource('/scan', ScanController::class)->only(['store', 'index']);
     Route::apiResource('/stats', App\Http\Controllers\Api\StatsController::class)->only(['index']);
     Route::apiResource('/announcement', App\Http\Controllers\Api\AnnouncementController::class)->only(['index']);
+    Route::apiResource('/user', App\Http\Controllers\Api\UserController::class)->only(['index']);
 });
 
 require __DIR__ . '/auth.php';

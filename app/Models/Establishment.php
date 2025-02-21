@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use OwenIt\Auditing\Contracts\Auditable;
-
+ 
 class Establishment extends Model implements Auditable
 {
     use HasFactory, \OwenIt\Auditing\Auditable;
@@ -28,5 +28,13 @@ class Establishment extends Model implements Auditable
 
     public function generateTags(): array {
         return ['Establishment'];
+    }
+
+    /**
+     * Get all of the scans for the Establishment
+     */
+    public function scans()
+    {
+        return $this->hasMany(ScanEstablishment::class);
     }
 }

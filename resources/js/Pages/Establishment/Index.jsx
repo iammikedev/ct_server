@@ -11,6 +11,7 @@ import { InputNumber } from 'primereact/inputnumber';
 import { Toast } from "primereact/toast";
 import QRCode from 'qrcode.react';
 import { format } from "date-fns";
+import { router } from '@inertiajs/react'
 
 export default function Index({ auth, establishments }) {
     const [createVisible, setCreateVisible] = useState(false);
@@ -174,7 +175,7 @@ export default function Index({ auth, establishments }) {
                 text
                 aria-label="Edit"
                 type="button"
-                onClick={() => onEdit(rowData)}
+                onClick={() => router.get(`/establishment/${rowData.id}`,)}
             />
         )
     }
@@ -203,7 +204,7 @@ export default function Index({ auth, establishments }) {
                 </div>
             </div>
 
-            <Dialog header={`${establishment != null ? 'Edit' : 'Add'} Establishment`} className='w-1/2' visible={createVisible} onHide={() => setCreateVisible(false)} footer={createDialogFooter}>
+            <Dialog header={`${establishment != null ? 'Edit' : 'Add'} Establishment`} className='lg:w-1/2' visible={createVisible} onHide={onClose} footer={createDialogFooter}>
                 <form id="create-establishment-form" onSubmit={submit} className="space-y-4">
                     {establishment && (
                         <div className="flex justify-center">
@@ -218,7 +219,7 @@ export default function Index({ auth, establishments }) {
                             type="text"
                             className="p-inputtext-sm w-full"
                             value={data.establishment_name}
-                            onChange={(e) => setData("establishment_name", e.target.value)}
+                            onChange={(e) => setData("establishment_name", e.target.value.toUpperCase())}
                             placeholder='Establishment Name'
                             invalid={!(errors.establishment_name === undefined)}
                             required
@@ -233,7 +234,7 @@ export default function Index({ auth, establishments }) {
                             type="text"
                             className="p-inputtext-sm w-full"
                             value={data.first_name}
-                            onChange={(e) => setData("first_name", e.target.value)}
+                            onChange={(e) => setData("first_name", e.target.value.toUpperCase())}
                             placeholder='First Name'
                             invalid={!(errors.first_name === undefined)}
                             required
@@ -248,7 +249,7 @@ export default function Index({ auth, establishments }) {
                             type="text"
                             className="p-inputtext-sm w-full"
                             value={data.middle_name}
-                            onChange={(e) => setData("middle_name", e.target.value)}
+                            onChange={(e) => setData("middle_name", e.target.value.toUpperCase())}
                             placeholder='Middle Name'
                             invalid={!(errors.middle_name === undefined)}
                         />
@@ -262,7 +263,7 @@ export default function Index({ auth, establishments }) {
                             type="text"
                             className="p-inputtext-sm w-full"
                             value={data.last_name}
-                            onChange={(e) => setData("last_name", e.target.value)}
+                            onChange={(e) => setData("last_name", e.target.value.toUpperCase())}
                             placeholder='Last Name'
                             invalid={!(errors.last_name === undefined)}
                         />
@@ -279,7 +280,7 @@ export default function Index({ auth, establishments }) {
                                 type="text"
                                 className="p-inputtext-sm w-full"
                                 value={data.email_address}
-                                onChange={(e) => setData("email_address", e.target.value)}
+                                onChange={(e) => setData("email_address", e.target.value.toUpperCase())}
                                 placeholder='Email Address'
                                 invalid={!(errors.email_address === undefined)}
                                 required
@@ -314,7 +315,7 @@ export default function Index({ auth, establishments }) {
                             type="text"
                             className="p-inputtext-sm w-full"
                             value={data.address}
-                            onChange={(e) => setData("address", e.target.value)}
+                            onChange={(e) => setData("address", e.target.value.toUpperCase())}
                             placeholder='Address'
                             invalid={!(errors.address === undefined)}
                             required
@@ -330,7 +331,7 @@ export default function Index({ auth, establishments }) {
                                 type="text"
                                 className="p-inputtext-sm w-full"
                                 value={data.baranggay}
-                                onChange={(e) => setData("baranggay", e.target.value)}
+                                onChange={(e) => setData("baranggay", e.target.value.toUpperCase())}
                                 placeholder='Baranggay'
                                 invalid={!(errors.baranggay === undefined)}
                                 required
@@ -345,7 +346,7 @@ export default function Index({ auth, establishments }) {
                                 type="text"
                                 className="p-inputtext-sm w-full"
                                 value={data.city}
-                                onChange={(e) => setData("city", e.target.value)}
+                                onChange={(e) => setData("city", e.target.value.toUpperCase())}
                                 placeholder='City'
                                 invalid={!(errors.city === undefined)}
                                 required
