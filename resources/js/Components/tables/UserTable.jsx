@@ -1,6 +1,8 @@
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { format } from "date-fns";
+import { Button } from "primereact/button";
+import { router } from '@inertiajs/react'
 
 const UserTable = ({ users }) => {
 
@@ -13,6 +15,20 @@ const UserTable = ({ users }) => {
         return format(date, "MMM dd, yyyy hh:mm a");
     }
 
+    const actionCellBody = (rowData) => {
+        return (
+            <Button
+                icon="pi pi-pen-to-square"
+                rounded
+                text
+                aria-label="View"
+                type="button"
+                onClick={() => router.get(`/user/${rowData.id}`,)}
+            />
+        )
+    }
+
+
     return (
         <DataTable value={users} columnResizeMode="expand" resizableColumns scrollable paginator rows={10} rowsPerPageOptions={[10, 25, 50]}>
             <Column field="name" className="font-bold" frozen sortable header="Name"></Column>
@@ -22,6 +38,7 @@ const UserTable = ({ users }) => {
             <Column field="user_profile.last_name" sortable header="Last Name"></Column>
             <Column field="user_profile.address" sortable header="Address"></Column>
             <Column field="created_at" sortable header="Created At" body={createdAtBody}></Column>
+            <Column header="Action" body={actionCellBody}></Column>
         </DataTable>
     );
 }
