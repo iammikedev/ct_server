@@ -65,4 +65,14 @@ class User extends Authenticatable implements Auditable
         return $this->hasMany(ScanEstablishment::class, 'user_id');
     }
 
+
+    /**
+     * Get all of the scan_user for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function scan_user()
+    {
+        return $this->hasMany(ScanUser::class, 'user_id');
+    }
 }

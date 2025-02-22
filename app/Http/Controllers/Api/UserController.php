@@ -15,4 +15,13 @@ class UserController extends Controller
 
         return Inertia::render('User/Index', compact('users'));
     }
+
+    public function show($id)
+    {
+        $user = User::with('user_profile', 'scan_establishments')->findOrFail($id);
+        $scan_establishments = $user->scan_establishments()->with('establishment')->paginate(10);
+        $scan_user = $user->scan_user()->paginate(10);
+
+        return Inertia::render('User/View', compact('user', 'scan_establishments', 'scan_user'));
+    }
 }

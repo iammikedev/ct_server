@@ -103,7 +103,7 @@ export default function View({ auth, establishment, scans, avg_monthly_scans, av
                         <MetricsCard title="Average Monthly Scans" value={avg_monthly_scans} />
                     </div>
                     <Card title="Scans">
-                        <ScanEstablishmentTable scans={scans.data} />
+                        <ScanEstablishmentTable scans={scans.data} excludedFields={['establishment.establishment_name']} />
                     </Card>
                 </div>
 
