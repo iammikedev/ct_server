@@ -18,7 +18,7 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $user = User::with('user_profile', 'scan_establishments')->findOrFail($id);
+        $user = User::with('user_profile', 'scan_establishments', 'user_status')->findOrFail($id);
         $scan_establishments = $user->scan_establishments()->with('establishment')->paginate(10);
         $scan_user = $user->scan_user()->paginate(10);
 

@@ -1,7 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import { Head } from '@inertiajs/react'
-import { Column } from 'primereact/column'
-import { DataTable } from 'primereact/datatable'
 import { format } from "date-fns";
 import ScanUserTable from '@/Components/tables/ScanUserTable';
 

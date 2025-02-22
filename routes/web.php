@@ -41,6 +41,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('scan', \App\Http\Controllers\Admin\ScanController::class);
 
     Route::resource('log', \App\Http\Controllers\Admin\AuditLogController::class);
+
+    // User Status
+    Route::resource('user-status', \App\Http\Controllers\Admin\UserStatusController::class);
 });
 
 require __DIR__.'/auth.php';
