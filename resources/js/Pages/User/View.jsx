@@ -7,16 +7,61 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { Button } from 'primereact/button';
 import QRCode from 'qrcode.react';
 import ScanUserTable from '@/Components/tables/ScanUserTable';
+import { Dropdown } from 'primereact/dropdown';
+import { Toast } from "primereact/toast";
+import { Timeline } from 'primereact/timeline';
+import { format } from "date-fns";
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+import { useRef } from 'react';
+import { Message } from 'primereact/message';
 
 const View = ({ auth, user, scan_establishments, scan_user }) => {
     const profile = user.user_profile;
+    const toast = useRef(null);
 
-    const { data, setData, processing, errors } = useForm({
-        first_name: profile.first_name,
-        middle_name: profile.middle_name ?? undefined,
-        last_name: profile.last_name,
-        address: profile.address,
+    const { data, setData, processing, post } = useForm({
+        status: profile.status,
+        user_id: user.id,
     });
+
+    const statuses = [
+        { name: 'NORMAL' },
+        { name: 'ASYMPTOMATIC' },
+        { name: 'SYMPTOMATIC' },
+        { name: 'RECOVERED' },
+        { name: 'DECEASED' },
+    ];
+
+    const showConfirmationDialog = () => {
+        confirmDialog({
+            message: 'Are you sure you want to update health declaration status?',
+            header: 'Confirmation',
+            icon: 'pi pi-exclamation-triangle',
+            defaultFocus: 'accept',
+            accept,
+        });
+    }
+
+    const accept = () => {
+        post(route('user-status.store'), {
+            onSuccess: (page) => {
+                toast.current.show({
+                    severity: 'success',
+                    summary: page.props.flash.message['title'],
+                    detail: page.props.flash.message['description'],
+                    life: 3000
+                });
+            },
+            onError: (errors) => {
+                toast.current.show({
+                    severity: 'error',
+                    summary: 'Oops!',
+                    detail: 'Something went wrong. Please try again.',
+                    life: 3000
+                });
+            }
+        });
+    }
 
     const downloadQRCode = () => {
         const qrCodeURL = document.getElementById('qrCode')
@@ -32,95 +77,107 @@ const View = ({ auth, user, scan_establishments, scan_user }) => {
     }
 
     const cardFooter = (
-        <div className="flex gap-x-1 justify-end">
+        <div className="flex gap-x-1 justify-center">
             <Button
                 type='button'
                 label="Download QR"
                 size='small'
                 severity="info"
                 onClick={downloadQRCode}
+                className='w-full'
                 outlined
             />
         </div>
     )
 
+    const formatCreatedAt = (str) => {
+        const date = new Date(str);
+        return format(date, "MMM dd, yyyy hh:mm a");
+    }
+
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title={`${profile.first_name} ${profile.last_name}`} />
+            <Toast ref={toast} />
+            <ConfirmDialog />
+
             <div className='grid grid-cols-3 gap-4 p-4'>
-                <div className="col-span-2">
-                    {/* <div className="flex gap-x-4 mb-4">
-                        <MetricsCard title="Average Daily Scans" value={avg_daily_scans} />
-                        <MetricsCard title="Average Monthly Scans" value={avg_monthly_scans} />
-                    </div> */}
+                <div className="col-span-2 space-y-4">
+                    {['ASYMPTOMATIC', 'SYMPTOMATIC'].includes(profile.status) && <Message severity="error" text="This user has been marked as Infected. Please take appropriate action if necessary. Ensure that all safety protocols are followed, including contact tracing and necessary precautions." className='justify-start w-full' />}
+
+                    {profile.status == 'RECOVERED' && <Message severity="success" text="This user has been marked as Recovered. No further action is required, but continued monitoring and adherence to health guidelines are recommended." />}
+                    <Card title="Health Declaration History">
+                        <Timeline value={user.user_status} opposite={(item) => item.status} content={(item) => <small className="text-color-secondary">{formatCreatedAt(item.created_at)}</small>} />
+                    </Card>
+
                     <Card title="Scanned Establishments">
                         <ScanEstablishmentTable excludedFields={['user.name']} scans={scan_establishments.data} />
                     </Card>
 
-                    <Card title="Scanned Contacts" className='mt-4'>
+                    <Card title="Scanned Contacts">
                         <ScanUserTable excludedFields={['user.name']} scans={scan_user.data} />
                     </Card>
                 </div>
 
                 <div className="col-span-1">
-                    <Card footer={cardFooter}>
-                        <form id="update-user-form" className="space-y-4">
+                    <div className="space-y-4">
+                        <Card footer={cardFooter}>
                             {user && (
-                                <div className="flex justify-center mb-12">
+                                <div className="flex justify-center">
                                     <QRCode value={user.id} id="qrCode" size={250} />
                                 </div>
                             )}
+                        </Card>
 
-                            <h3 className="text-lg font-semibold">User Information</h3>
-                            <div>
+                        <Card title={"Health Declaration"}>
+                            <Dropdown value={data.status} onChange={(e) => setData('status', e.value)} options={statuses}
+                                optionValue='name'
+                                optionLabel='name'
+                                placeholder="Select Status" className="w-full md:w-14rem" />
+                            <Button
+                                className='mt-4 w-full'
+                                type='button'
+                                onClick={showConfirmationDialog}
+                                label={'Update'}
+                                size='small'
+                                loading={processing}
+                                disabled={profile.status == data.status || processing} />
+
+                        </Card>
+
+                        <Card title={"User Information"}>
+                            <div className="space-y-4">
                                 <InputText
                                     id="first_name"
                                     type="text"
                                     className="p-inputtext-sm w-full"
-                                    value={data.first_name}
-                                    onChange={(e) => setData("first_name", e.target.value.toUpperCase())}
-                                    placeholder='First Name'
-                                    invalid={!(errors.first_name === undefined)}
-                                    required
+                                    value={profile.first_name.toUpperCase()}
+                                    disabled
                                 />
 
-                                {errors.first_name && <small className='text-red-600'>{errors.first_name}</small>}
-                            </div>
-
-                            <div>
                                 <InputText
                                     id="middle_name"
                                     type="text"
                                     className="p-inputtext-sm w-full"
-                                    value={data.middle_name}
-                                    onChange={(e) => setData("middle_name", e.target.value.toUpperCase())}
-                                    placeholder={data.middle_name === undefined ? 'N/A' : 'Middle Name'}
-                                    invalid={!(errors.middle_name === undefined)}
+                                    value={profile.middle_name == null ? 'N/A' : profile.middle_name.toUpperCase()}
+                                    disabled
                                 />
 
-                                {errors.middle_name && <small className='text-red-600'>{errors.middle_name}</small>}
-                            </div>
-
-                            <div>
                                 <InputText
                                     id="last_name"
                                     type="text"
                                     className="p-inputtext-sm w-full"
-                                    value={data.last_name}
-                                    onChange={(e) => setData("last_name", e.target.value.toUpperCase())}
-                                    placeholder={data.last_name === null ? 'N/A' : 'Last Name'}
-                                    invalid={!(errors.last_name === undefined)}
+                                    value={profile.last_name}
+                                    disabled
                                 />
-
-                                {errors.last_name && <small className='text-red-600'>{errors.last_name}</small>}
                             </div>
+                        </Card>
 
-                            <h3 className="text-lg font-semibold">Location Details</h3>
+                        <Card title={"Location Details"}>
+                            <InputTextarea autoResize value={profile.address} onChange={(e) => setData("address", e.target.value.toUpperCase())} rows={5} cols={30} className='w-full' disabled />
+                        </Card>
 
-                            <InputTextarea autoResize value={data.address} onChange={(e) => setData("address", e.target.value.toUpperCase())} rows={5} cols={30} className='w-full' />
-
-                            <h3 className="text-lg font-semibold">Contact Details</h3>
-
+                        <Card title={"Contact Details"}>
                             <div>
                                 <InputText
                                     id="email"
@@ -129,8 +186,8 @@ const View = ({ auth, user, scan_establishments, scan_user }) => {
                                     value={user.email} disabled
                                 />
                             </div>
-                        </form>
-                    </Card>
+                        </Card>
+                    </div>
                 </div>
             </div>
         </AuthenticatedLayout>

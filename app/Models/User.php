@@ -75,4 +75,14 @@ class User extends Authenticatable implements Auditable
     {
         return $this->hasMany(ScanUser::class, 'user_id');
     }
+
+    /**
+     * Get all of the user_status for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function user_status()
+    {
+        return $this->hasMany(UserStatus::class);
+    }
 }

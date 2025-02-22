@@ -8,13 +8,12 @@ import { InputNumber } from 'primereact/inputnumber';
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { Toast } from "primereact/toast";
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import MetricsCard from '@/Components/MetricsCard'
 
 export default function View({ auth, establishment, scans, avg_monthly_scans, avg_daily_scans }) {
     const toast = useRef(null);
-    const [canEdit, setCanEdit] = useState(false);
-    const { data, setData, post, put, processing, errors, reset } = useForm({
+    const { data, setData, put, processing, errors } = useForm({
         first_name: establishment.first_name,
         middle_name: establishment.middle_name,
         last_name: establishment.last_name,
