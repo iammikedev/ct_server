@@ -143,8 +143,8 @@ export default function Dashboard({
                         <MetricsCard title="Total Establishment Scans" value={scan_establishment_count} icon="pi-barcode" />
                     </div>
 
-                    <div className='grid grid-cols-6 grid-rows-3 gap-x-4'>
-                        <Card className='flex-1 col-span-4 row-span-2' title={"COVID Analytics"}>
+                    <div className='grid grid-cols-6 grid-rows-3 gap-x-4 align-items-center'>
+                        <Card className='flex-1 col-span-4' title={"COVID Analytics"}>
                             <Chart type="line" data={chartData} options={chartOptions} />
                         </Card>
 

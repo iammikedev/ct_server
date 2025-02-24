@@ -19,6 +19,10 @@ const View = ({ auth, user, scan_establishments, scan_user }) => {
     const profile = user.user_profile;
     const toast = useRef(null);
 
+    const formatValue = (str) => str.replace(/_/g, " ");
+
+    const formatValueToEnum = (str) => str.replace(/ /g, "_");
+
     const { data, setData, processing, post } = useForm({
         status: profile.status,
         user_id: user.id,
@@ -26,6 +30,7 @@ const View = ({ auth, user, scan_establishments, scan_user }) => {
 
     const statuses = [
         { name: 'NORMAL' },
+        { name: formatValue('UNDER_INVESTIGATION') },
         { name: 'ASYMPTOMATIC' },
         { name: 'SYMPTOMATIC' },
         { name: 'RECOVERED' },
@@ -107,7 +112,13 @@ const View = ({ auth, user, scan_establishments, scan_user }) => {
 
                     {profile.status == 'RECOVERED' && <Message severity="success" text="This user has been marked as Recovered. No further action is required, but continued monitoring and adherence to health guidelines are recommended." />}
                     <Card title="Health Declaration History">
-                        <Timeline value={user.user_status} opposite={(item) => item.status} content={(item) => <small className="text-color-secondary">{formatCreatedAt(item.created_at)}</small>} />
+
+                        {user.user_status.length == 0 ? <div className="flex items-center justify-center">
+                            <small className="text-grey-700">No history found</small>
+                        </div> :
+                            <Timeline value={user.user_status} opposite={(item) => formatValue(item.status)} content={(item) => <small className="text-color-secondary">{formatCreatedAt(item.created_at)}</small>} />
+                        }
+
                     </Card>
 
                     <Card title="Scanned Establishments">
@@ -115,7 +126,7 @@ const View = ({ auth, user, scan_establishments, scan_user }) => {
                     </Card>
 
                     <Card title="Scanned Contacts">
-                        <ScanUserTable excludedFields={['user.name']} scans={scan_user.data} />
+                        <ScanUserTable excludedFields={['host.name']} scans={scan_user.data} />
                     </Card>
                 </div>
 
@@ -130,18 +141,18 @@ const View = ({ auth, user, scan_establishments, scan_user }) => {
                         </Card>
 
                         <Card title={"Health Declaration"}>
-                            <Dropdown value={data.status} onChange={(e) => setData('status', e.value)} options={statuses}
+                            <Dropdown value={formatValue(data.status)} onChange={(e) => setData('status', formatValueToEnum(e.value))} options={statuses}
                                 optionValue='name'
                                 optionLabel='name'
-                                placeholder="Select Status" className="w-full md:w-14rem" />
-                            <Button
+                                placeholder="Select Status" className="w-full md:w-14rem" disabled={profile.status == 'DECEASED'} />
+                            {profile.status != 'DECEASED' && <Button
                                 className='mt-4 w-full'
                                 type='button'
                                 onClick={showConfirmationDialog}
                                 label={'Update'}
                                 size='small'
                                 loading={processing}
-                                disabled={profile.status == data.status || processing} />
+                                disabled={profile.status == data.status || processing} />}
 
                         </Card>
 

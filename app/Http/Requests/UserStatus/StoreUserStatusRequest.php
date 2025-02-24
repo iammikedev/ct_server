@@ -23,7 +23,7 @@ class StoreUserStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => 'required|string|in:NORMAL,SYMPTOMATIC,ASYMPTOMATIC,RECOVERED,DECEASED',
+            'status' => 'required|string|in:NORMAL,UNDER_INVESTIGATION,SYMPTOMATIC,ASYMPTOMATIC,RECOVERED,DECEASED',
             'user_id' => 'required|integer|exists:users,id',
         ];
     }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->enum('status', ['NORMAL', 'ASYMPTOMATIC', 'SYMPTOMATIC', 'RECOVERED', 'DECEASED'])->nullable()->default('NORMAL');
+            $table->enum('status', ['NORMAL', 'UNDER_INVESTIGATION', 'ASYMPTOMATIC', 'SYMPTOMATIC', 'RECOVERED', 'DECEASED'])->nullable()->default('NORMAL');
             $table->timestamps();
         });
     }
