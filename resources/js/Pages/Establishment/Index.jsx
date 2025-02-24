@@ -41,7 +41,6 @@ export default function Index({ auth, establishments }) {
         const qrCodeURL = document.getElementById('qrCode')
             .toDataURL("image/png")
             .replace("image/png", "image/octet-stream");
-        console.log(qrCodeURL)
         let aEl = document.createElement("a");
         aEl.href = qrCodeURL;
         aEl.download = `${establishment.establishment_code}.png`;

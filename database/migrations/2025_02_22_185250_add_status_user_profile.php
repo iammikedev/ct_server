@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('user_profiles', function (Blueprint $table) {
-            $table->enum('status', ['NORMAL', 'ASYMPTOMATIC', 'SYMPTOMATIC', 'RECOVERED', 'DECEASED'])->nullable()->default('NORMAL')->after('address');
+            $table->enum('status', ['NORMAL', 'UNDER_INVESTIGATION', 'ASYMPTOMATIC', 'SYMPTOMATIC', 'RECOVERED', 'DECEASED'])->nullable()->default('NORMAL')->after('address');
         });
     }
 

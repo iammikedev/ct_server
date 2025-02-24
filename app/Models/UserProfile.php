@@ -16,4 +16,14 @@ class UserProfile extends Model
         'last_name',
         'address'
     ];
+
+    /**
+     * Get the user that owns the UserProfile
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

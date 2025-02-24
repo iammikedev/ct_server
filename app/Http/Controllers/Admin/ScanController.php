@@ -10,7 +10,8 @@ use App\Models\ScanUser;
 class ScanController extends Controller
 {
     public function index() { 
-        $scans = ScanUser::with('user', 'host')->orderBy('created_at', 'DESC')->get();
+        $scans = ScanUser::with('user', 'host')->orderBy('created_at', 'DESC')->paginate(10);
+        
         return Inertia::render('Scan/Index', compact('scans'));
     }
 }

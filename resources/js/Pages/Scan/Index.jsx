@@ -4,10 +4,6 @@ import { format } from "date-fns";
 import ScanUserTable from '@/Components/tables/ScanUserTable';
 
 export default function Index({ auth, scans }) {
-    const createdAtBody = (str) => {
-        const date = new Date(str.created_at);
-        return format(date, "MMM dd, yyyy hh:mm a");
-    }
 
     return (
         <AuthenticatedLayout user={auth.user}>
@@ -15,7 +11,7 @@ export default function Index({ auth, scans }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <ScanUserTable scans={scans} />
+                    <ScanUserTable scans={scans.data} />
                 </div>
             </div>
         </AuthenticatedLayout>
