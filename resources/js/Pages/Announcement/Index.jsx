@@ -139,6 +139,11 @@ export default function Index({ auth, announcements }) {
         return format(date, "MMM dd, yyyy hh:mm a");
     }
 
+    const onDialogOpen = () => {
+        reset();
+        setCreateVisible(true);
+    }
+
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Announcements" />
@@ -146,7 +151,7 @@ export default function Index({ auth, announcements }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <Button type="button" label="Create" icon="pi pi-plus" size="small" className="mb-4" onClick={() => setCreateVisible(true)} />
+                    <Button type="button" label="Create" icon="pi pi-plus" size="small" className="mb-4" onClick={onDialogOpen} />
 
                     <DataTable value={announcements} columnResizeMode="expand" resizableColumns scrollable paginator rows={10} rowsPerPageOptions={[10, 25, 50]}>
                         <Column field="title" className="font-bold" frozen sortable header="Title"></Column>
