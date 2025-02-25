@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia; 
 use App\Http\Requests\Announcement\StoreAnnouncementRequest;
+use App\Http\Requests\Announcement\UpdateAnnouncementRequest;
 use App\Models\Announcement;
 use Carbon\Carbon; 
 
@@ -25,8 +26,26 @@ class AnnouncementController extends Controller
             Announcement::create($validated);
 
             back()->with('message', [
-                'title' => 'Establishment successfully updated',
-                'description' => 'Updated establishment'
+                'title' => 'Announcement successfully created!',
+                'description' => 'Your message is now live and ready to inform your audience.'
+            ]);
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            return back()->withErrors([
+                'message' => 'Something went wrong'
+            ]);
+        }
+    }
+
+    public function update(UpdateAnnouncementRequest $request, Announcement $announcement) { 
+        try {
+            $validated = $request->validated();
+
+            $announcement->update($validated);
+
+            back()->with('message', [
+                'title' => 'Announcement successfully updated!',
+                'description' => 'Your message is now live and ready to inform your audience.'
             ]);
         } catch (\Exception $e) {
             dd($e->getMessage());
